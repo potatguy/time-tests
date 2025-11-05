@@ -1,7 +1,9 @@
 
 import pytest
 import yaml
-from times import time_range, compute_overlap_time
+from times import time_range, compute_overlap_time, iss_passes
+from unittest.mock import patch
+import requests
 
 # --- Load fixture.yaml once ---
 def load_fixtures():
@@ -31,3 +33,10 @@ def test_compute_overlap(case_data):
     expected = [tuple(e) for e in data["expected"]] 
 
     assert result == expected
+
+def test_iss_pass_default_params():
+    with patch.object(requests, 'get') as mock_get:
+        iss_times = iss_passes()
+        mock_get.assert_called_with(
+            'https://api.n2yo.com/rest/v1/satellite/visualpasses/25544/56/0/0/10/50&apiKey=33Q884-HFUV8K-SCS3LG-55CU'
+        )
